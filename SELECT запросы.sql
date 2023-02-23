@@ -23,11 +23,11 @@ select a."name", avg(t.duration) from album a
 ----------------------------------------------------------
 
 -- 4) все исполнители, которые не выпустили альбомы в 2020 году;
-
+--select * from artist a
 select a."name" from artist a
 	full outer join artistalbum aa on a.id = aa.album_id
 	full outer join album al on aa.album_id = al.id
-	where not al."year" = 2020 and a."name" is not null;
+	where a."name" not in (select a."name" from artist a where al."year" = 2020);
 
 ----------------------------------------------------------
 
@@ -75,4 +75,4 @@ select a."name"  from artist a
 select a."name", count(t.album_id) from album a 
 	left join track t on a.id = t.album_id
 	group by a."name"
-	having count(album_id) < 2;
+	having count(t.album_id) = (select min(track.album_id) from track);
