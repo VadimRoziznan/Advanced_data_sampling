@@ -71,8 +71,18 @@ select a."name"  from artist a
 ----------------------------------------------------------
 
 -- 9) название альбомов, содержащих наименьшее количество треков.
-	
-select a."name", count(t.album_id) from album a 
-	left join track t on a.id = t.album_id
-	group by a."name"
-	having count(t.album_id) = (select min(track.album_id) from track);
+
+select a."name", count(t."name") 
+	from album a
+       join track t 
+       on a.id = t.album_id 
+	group by a."name" 
+	having count(t."name")  = (
+        select count(t."name") 
+        	from track t
+		       join album a 
+		       on a.id = t.album_id 
+			group by a."name" 
+			order by count(t."name") limit 1
+		);
+
